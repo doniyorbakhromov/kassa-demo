@@ -56,31 +56,17 @@ class SettingsPage extends StatelessWidget {
                     const SectionLabel("Xavfsizlik"),
                     const SizedBox(height: 12),
                     AppCard(
-                      child: Column(
-                        children: [
-                          _Row(
-                            icon: Icons.lock_outline_rounded,
-                            color: Ink3.violet,
-                            title: "Kirish paroli",
-                            value: "*" * store.settings.pin.length,
-                            subtitle: "Kassaga kirish uchun raqamli parol",
-                            onTap: () => _changePin(context),
-                          ),
-                          const Divider(height: 22),
-                          _Row(
-                            icon: Icons.lock_clock_rounded,
-                            color: Ink3.gold,
-                            title: "Avtomatik qulflash",
-                            value: store.settings.autoLockMinutes == 0
-                                ? "Yo'q"
-                                : "${store.settings.autoLockMinutes} daq",
-                            subtitle: "Tegilmasa kassa o'zi parol so'raydi",
-                            onTap: () => _editAutoLock(context),
-                          ),
-                        ],
+                      child: _Row(
+                        icon: Icons.lock_clock_rounded,
+                        color: Ink3.gold,
+                        title: "Avtomatik qulflash",
+                        value: store.settings.autoLockMinutes == 0
+                            ? "Yo'q"
+                            : "${store.settings.autoLockMinutes} daq",
+                        subtitle: "Tegilmasa kassa o'zi parol so'raydi",
+                        onTap: () => _editAutoLock(context),
                       ),
                     ),
-                    const SizedBox(height: 24),
                     const SizedBox(height: 24),
                     const SectionLabel("Ma'lumotlar"),
                     const SizedBox(height: 12),
@@ -295,103 +281,6 @@ class SettingsPage extends StatelessWidget {
     if (res != null) store.setAutoLockMinutes(res);
   }
 
-  Future<void> _changePin(BuildContext context) async {
-    String? error;
-
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => DialogForm(
-        initial: const ["", "", ""],
-        builder: (ctx, f, setLocal) => AlertDialog(
-          title: const Text("Parolni o'zgartirish"),
-          content: SizedBox(
-            width: 340,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: f[0],
-                    obscureText: true,
-                    keyboardType: TextInputType.number,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: "Joriy parol",
-                      prefixIcon: Icon(Icons.lock_outline_rounded),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: f[1],
-                    obscureText: true,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Yangi parol (4-8 raqam)",
-                      prefixIcon: Icon(Icons.password_rounded),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: f[2],
-                    obscureText: true,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Yangi parolni takrorlang",
-                      prefixIcon: Icon(Icons.password_rounded),
-                    ),
-                  ),
-                  if (error != null) ...[
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        error!,
-                        style: const TextStyle(color: Ink3.red, fontSize: 12.5),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text("Bekor qilish"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final oldP = f[0].text.trim();
-                final newP = f[1].text.trim();
-                final rep = f[2].text.trim();
-                if (oldP != store.settings.pin) {
-                  setLocal(() => error = "Joriy parol noto'g'ri");
-                  return;
-                }
-                if (newP.length < 4 ||
-                    newP.length > 8 ||
-                    int.tryParse(newP) == null) {
-                  setLocal(
-                    () => error = "Parol 4-8 ta raqamdan iborat bo'lsin",
-                  );
-                  return;
-                }
-                if (newP != rep) {
-                  setLocal(() => error = "Parollar mos kelmadi");
-                  return;
-                }
-                store.setPin(newP);
-                Navigator.pop(ctx);
-                toast(ctx, "Parol yangilandi");
-              },
-              child: const Text("Saqlash"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _Row extends StatelessWidget {

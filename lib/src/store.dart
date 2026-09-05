@@ -204,12 +204,6 @@ class AppStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPin(String pin) {
-    settings.pin = pin;
-    _opSettings();
-    _changed();
-  }
-
   void setVenueName(String name) {
     settings.venueName = name.trim().isEmpty ? "KASSA" : name.trim();
     _opSettings();
